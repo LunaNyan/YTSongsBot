@@ -1,19 +1,16 @@
 #!/usr/bin/python3
 
-import os, platform, sys, time, threading, random, yt_search, configparser, ctypes
-from playsound import playsound
+import ctypes, os, platform, sys, time, threading, random, yt_search, simpleaudio
 
 # YouTube Search API v3에 대응하는 API 키를 편의상 일부러 깠습니다
 # 원하시면 바꾸셔도 됩니다
 yt = yt_search.build('AIzaSyD6UTc45CgZoComo_Abqu7jL16YjXhTurA')
-config = configparser.ConfigParser()
-config.read("cache.txt")
 
 songs = []
 songs_dl = []
 ap = True
 
-print("YTSongsBot v 1.02")
+print("YTSongsBot v 1.10")
 print("type 'h' for help")
 
 def sys_search_video(title):
@@ -62,16 +59,15 @@ def sys_AudioPlayer():
             if ap:
                 TitlenoLoop = 0
                 ctypes.windll.kernel32.SetConsoleTitleW("▶ " + np[0])
-                playsound(np[1] + '.wav')
+                wave_obj = simpleaudio.WaveObject.from_wave_file(np[1] + '.wav')
+                play_obj = wave_obj.play()
+                play_obj.wait_done()
+                os.remove(np[1] + '.wav')
         time.sleep(.5)
 
 def sys_AutoDownloader():
     global songs
     global songs_dl
-    songs_played = []
-    ca = config.items("cache")
-    for c in ca:
-        songs_played.append(c[0])
     while 1 == 1:
         if not songs:
             pass
@@ -80,9 +76,6 @@ def sys_AutoDownloader():
                 pass
             else:
                 sys_DownloadSong(songs[0][1])
-                config.set("cache", songs[0][1], songs[0][0])
-                with open("cache.txt", 'w') as configfile:
-                    config.write(configfile)
             songs_dl.append(songs[0])
             del songs[0]
         time.sleep(.5)
@@ -102,9 +95,7 @@ while 1 == 1:
         print("sf           : shuffle playlist")
         print("del (number) : delete item in playlist")
         print("pr (number)  : priorite playlist item to next song")
-        print("----- do not procedure if you don't know what are you doing -----")
-        print("ren          : rename cached wave files to its original name and clear cache")
-        print("ap           : toggles audio player")
+        print("sk           : skip current song")
     elif inp.startswith("r") and inp != "ren":
         if inp == "r":
             print("Usage = r (search keyword)")
@@ -151,22 +142,7 @@ while 1 == 1:
                 songs_dl.insert(0, npr)
             except:
                 print("invalid number")
-    elif inp == "ren":
-        it = config.items("cache")
-        for i in it:
-            os.rename(i[0] + ".wav", i[1] + ".wav")
-            print(i[0] + "→" + i[1])
-        config.remove_section("cache")
-        config.add_section("cache")
-        print("clearing cache")
-        with open("cache.txt", 'w') as configfile:
-            config.write(configfile)
-    elif inp == "ap":
-        if ap:
-            ap = False
-            print("audio player is OFF")
-        else:
-            ap = True
-            print("audio player is ON")
+    elif inp == "sk":
+        simpleaudio.stop_all()
     else:
         continue
