@@ -117,7 +117,7 @@ while 1 == 1:
                 continue
     elif inp == "l":
         pn = 0
-        if not songs_dl:
+        if not songs_dl and not songs:
             print("no song in playlist")
         else:
             for p in songs_dl:
