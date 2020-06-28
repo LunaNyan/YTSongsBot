@@ -15,15 +15,9 @@ config.read("cache.txt")
 songs = []
 songs_dl = []
 ap = True
-wtitle = ""
 
-print("YTSongsBot v 1.00")
+print("YTSongsBot v 1.01")
 print("type 'h' for help")
-
-def set_title(text):
-    global wtitle
-    wtitle = text
-    ctypes.windll.kernel32.SetConsoleTitleW(text)
 
 def sys_search_video(title):
     print("Search result of keyword " + title)
@@ -63,34 +57,31 @@ def sys_AudioPlayer():
             if TitlenoLoop >= 1:
                 pass
             else:
-                set_title("■ Play anything you want")
+                ctypes.windll.kernel32.SetConsoleTitleW("■ Play anything you want")
                 TitlenoLoop += 1
         else:
             np = songs_dl[0]
             del songs_dl[0]
             if ap:
                 TitlenoLoop = 0
-                set_title("▶ " + np[0])
+                ctypes.windll.kernel32.SetConsoleTitleW("▶ " + np[0])
                 playsound(np[1] + '.wav')
         time.sleep(.5)
 
 def sys_AutoDownloader():
     global songs
     global songs_dl
-    global wtitle
     songs_played = []
     ca = config.items("cache")
     for c in ca:
         songs_played.append(c[0])
     while 1 == 1:
         if not songs:
-            if "(Downloading song)" in wtitle:
-                set_title(wtitle.replace(" (Downloading requested song)", ""))
+            pass
         else:
             if os.path.isfile(songs[0][1] + ".wav"):
                 pass
             else:
-                set_title(wtitle + " (Downloading requested song)")
                 sys_DownloadSong(songs[0][1])
                 config.set("cache", songs[0][1], songs[0][0])
                 with open("cache.txt", 'w') as configfile:
