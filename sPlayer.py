@@ -1,14 +1,11 @@
-# TODO : 
-# BUG : 스킵 불가능
-
-# Configuration
-yt_apikey = 'AIzaSyD6UTc45CgZoComo_Abqu7jL16YjXhTurA'
-# -----
+#!/usr/bin/python3
 
 import os, platform, sys, time, threading, random, yt_search, configparser, ctypes
 from playsound import playsound
 
-yt = yt_search.build(yt_apikey)
+# YouTube Search API v3에 대응하는 API 키를 편의상 일부러 깠습니다
+# 원하시면 바꾸셔도 됩니다
+yt = yt_search.build('AIzaSyD6UTc45CgZoComo_Abqu7jL16YjXhTurA')
 config = configparser.ConfigParser()
 config.read("cache.txt")
 
@@ -16,7 +13,7 @@ songs = []
 songs_dl = []
 ap = True
 
-print("YTSongsBot v 1.01")
+print("YTSongsBot v 1.02")
 print("type 'h' for help")
 
 def sys_search_video(title):
@@ -103,7 +100,6 @@ while 1 == 1:
         print("r (keyword)  : search song and add to playlist")
         print("l            : print playlist")
         print("sf           : shuffle playlist")
-        print("sk           : skip current song")
         print("del (number) : delete item in playlist")
         print("pr (number)  : priorite playlist item to next song")
         print("----- do not procedure if you don't know what are you doing -----")
@@ -120,19 +116,21 @@ while 1 == 1:
             except:
                 continue
     elif inp == "l":
+        pn = 0
         if not songs_dl:
             print("no song in playlist")
         else:
-            pn = 0
             for p in songs_dl:
                 print("#" + str(pn) + " : " + p[0])
                 pn += 1
+        if not songs:
+            pass
+        else:
+            for q in songs:
+                print("#" + str(pn) + " : " + q[0] + " (Downloading in progress)")
+                pn += 1
     elif inp == "sf":
         random.shuffle(songs_dl)
-    elif inp == "sk":
-        t.terminate()
-        t = threading.Thread(target=sys_AudioPlayer)
-        t.start()
     elif inp.startswith("del"):
         if inp == "del":
             print("Usage : del (number)")
