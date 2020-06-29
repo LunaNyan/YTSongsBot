@@ -24,6 +24,15 @@ sudo apt install youtube-dl ffmpeg
 
 실행 : `python3 sPlayer.py`
 
+## 설치 방법 (macOS)
+```
+git clone https://github.com/LunaNyan/YTSongsBot
+cd YTSongsBot
+python3 -m pip install -r requirements.txt
+brew install ffmpeg
+```
+실행 : `python3 sPlayer.py`
+
 ## 명령어
 h - 도움말을 표시합니다.
 
