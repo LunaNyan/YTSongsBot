@@ -7,12 +7,13 @@
 - 적절한 오디오 출력 장치
 
 ## 설치 방법 (Windows)
-1. Python 3를 다운로드합니다. Python 3.7 또는 그 이상을 권장합니다.
-2. FFmpeg를 다운로드합니다.
+1. [Python 3를 다운로드](https://www.python.org/downloads/)합니다. Python 3.7 또는 그 이상을 권장합니다. **설치 버튼을 누르기 전에 PATH 옵션을 체크하세요.**
+2. [FFmpeg를 다운로드](https://ffmpeg.zeranoe.com/builds/)합니다.
 3. FFmpeg 압축 파일을 열고 bin 안의 모든 파일을 C:\Windows\system32에 복사합니다.
 4. YTSongs 레포지토리를 적절한 경로에 다운로드합니다.
 5. cmd를 불러 `pip3 install -r requirements.txt`를 입력합니다.
-6. sPlayer.py를 실행합니다.
+
+실행 : sPlayer.py
 
 ## 설치 방법 (Linux)
 ```
