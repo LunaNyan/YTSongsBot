@@ -9,12 +9,19 @@ yt = yt_search.build('AIzaSyB586kMlriM12H1jYN8ZqNwd5RD-M79pjc')
 
 songs = []
 songs_dl = []
+np = []
 qp = False
 
-RPC = Presence('726879500360482879')
-RPC.connect()
+RPC = None
+try:
+    RPC = Presence('726879500360482879')
+    RPC.connect()
+except:
+    pass
 
-print("YTSongsBot v1.31")
+osis = platform.system()
+
+print("YTSongsBot v1.32")
 print("type 'h' for help")
 
 def sys_search_video(title):
@@ -34,19 +41,22 @@ def sys_search_video(title):
             inpa = input("N>")
             if inpa == "x":
                 raise
-            try:
-                n = int(inpa)
-                result = [search_result.title[n], search_result.videoId[n], search_result.channelTitle[n]]
-            except:
-                continue
+            else:
+                try:
+                    n = int(inpa)
+                    result = [search_result.title[n], search_result.videoId[n], search_result.channelTitle[n]]
+                    break
+                except Exception as e:
+                    print(e)
+                    continue
         print("added song " + search_result.title[n] + " by " + search_result.channelTitle[n] + ", now downloading")
         return result
 
 def sys_DownloadSong(vid):
-    osis = platform.system()
+    global osis
     if osis == "Windows":
         trashbin = ">NUL"
-    elif osis == "Linux":
+    elif osis == "Linux" or osis == "Darwin":
         trashbin = ">/dev/null"
     else:
         trashbin = ""
@@ -55,21 +65,26 @@ def sys_DownloadSong(vid):
 def sys_AudioPlayer():
     TitlenoLoop = 0
     global songs_dl
+    global np
     while 1 == 1:
         if not songs_dl:
             if TitlenoLoop >= 1:
                 pass
             else:
-                RPC.update(state="노동요 듣는중", details="예약된 곡 없음")
-                ctypes.windll.kernel32.SetConsoleTitleW("■ Play anything you want")
+                if osis == "Windows":
+                    ctypes.windll.kernel32.SetConsoleTitleW("■ Play anything you want")
+                if RPC != None:
+                    RPC.update(state="노동요 듣는중", details="예약된 곡 없음")
                 TitlenoLoop += 1
         else:
             np = songs_dl[0]
             del songs_dl[0]
             TitlenoLoop = 0
             ctypes.windll.kernel32.SetConsoleTitleW("▶ " + np[0])
-            RPC.update(state="노동요 듣는중", details=np[0])
-            wave_obj = simpleaudio.WaveObject.from_wave_file(np[1] + '.wav')
+            if osis == "Windows":
+                wave_obj = simpleaudio.WaveObject.from_wave_file(np[1] + '.wav')
+            if RPC != None:
+                RPC.update(state="노동요 듣는중", details=np[0])
             os.remove(np[1] + '.wav')
             play_obj = wave_obj.play()
             play_obj.wait_done()
@@ -109,6 +124,7 @@ while 1 == 1:
         print("del (number) : delete item in playlist")
         print("pr (number)  : priorite playlist item to next song")
         print("sk           : skip current song")
+        print("np           : show what song is playing now")
         print("=====  player options  =====")
         print("qp           : toggles quick play(always play 1st item in search)")
     elif inp.startswith("r") and inp != "ren":
@@ -159,6 +175,8 @@ while 1 == 1:
                 print("invalid number")
     elif inp == "sk":
         simpleaudio.stop_all()
+    elif inp == "np":
+        print("Now playing : " + np[0])
     elif inp == "qp":
         if qp:
             qp = False
