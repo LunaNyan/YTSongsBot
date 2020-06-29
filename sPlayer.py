@@ -1,17 +1,19 @@
 #!/usr/bin/python3
 
-import ctypes, os, platform, sys, time, threading, random, yt_search, simpleaudio, wave
+import ctypes, os, platform, sys, time, threading, random, yt_search, simpleaudio
+from pypresence import Presence
 
-# YouTube Search API v3에 대응하는 API 키를 편의상 일부러 깠습니다
-# 원하시면 바꾸셔도 됩니다
+# 사용자 편의를 위해 Youtube Data API v3에 대응하는 API Key를 일부러 깠습니다
+# 원하신다면 바꾸셔도 됩니다
 yt = yt_search.build('AIzaSyDImVy96pESaXcy7mEnhvuhIlAHXuwk1uQ')
 
 songs = []
 songs_dl = []
-ap = True
-filetodelete = ""
 
-print("YTSongsBot v 1.20")
+RPC = Presence('726879500360482879')
+RPC.connect()
+
+print("YTSongsBot v1.30")
 print("type 'h' for help")
 
 def sys_search_video(title):
@@ -33,70 +35,53 @@ def sys_search_video(title):
         except:
             continue
 
-def sys_ProcedureFileRemove():
-    global filetodelete
-    while 1 == 1:
-        try:
-            os.remove(filetodelete + ".wav")
-            break
-        except:
-            time.sleep(.5)
-            continue
+def sys_DownloadSong(vid):
+    osis = platform.system()
+    if osis == "Windows":
+        trashbin = ">NUL"
+    elif osis == "Linux":
+        trashbin = ">/dev/null"
+    else:
+        trashbin = ""
+    os.system('youtube-dl -x --audio-format=wav --output "' + vid + '.%(ext)s" https://www.youtube.com/watch?v=' + vid + trashbin)
 
 def sys_AudioPlayer():
     TitlenoLoop = 0
     global songs_dl
-    global ap
     while 1 == 1:
         if not songs_dl:
             if TitlenoLoop >= 1:
                 pass
             else:
+                RPC.update(state="노동요 듣는중", details="예약된 곡 없음")
                 ctypes.windll.kernel32.SetConsoleTitleW("■ Play anything you want")
                 TitlenoLoop += 1
         else:
             np = songs_dl[0]
             del songs_dl[0]
-            if ap:
-                TitlenoLoop = 0
-                ctypes.windll.kernel32.SetConsoleTitleW("▶ " + np[0])
-                play_obj = simpleaudio.play_buffer(np[3], np[4], np[5], np[6])
-                play_obj.wait_done()
-                play_obj = None
-                np = None
+            TitlenoLoop = 0
+            ctypes.windll.kernel32.SetConsoleTitleW("▶ " + np[0])
+            RPC.update(state="노동요 듣는중", details=np[0])
+            wave_obj = simpleaudio.WaveObject.from_wave_file(np[1] + '.wav')
+            os.remove(np[1] + '.wav')
+            play_obj = wave_obj.play()
+            play_obj.wait_done()
+            wave_obj = None
+            play_obj = None
         time.sleep(.5)
 
 def sys_AutoDownloader():
     global songs
     global songs_dl
-    global filetodelete
     while 1 == 1:
         if not songs:
             pass
         else:
-            osis = platform.system()
-            if osis == "Windows":
-                trashbin = ">NUL"
-            elif osis == "Linux" or osis == "Darwin":
-                trashbin = ">/dev/null"
+            if os.path.isfile(songs[0][1] + ".wav"):
+                pass
             else:
-                trashbin = ""
-            os.system('youtube-dl -x --audio-format=wav --output "' + songs[0][1] + '.%(ext)s" https://www.youtube.com/watch?v=' + songs[0][1] + trashbin)
-            wave_read = wave.open(songs[0][1] + ".wav", 'rb')
-            audio_data = wave_read.readframes(wave_read.getnframes())
-            num_channels = wave_read.getnchannels()
-            bytes_per_sample = wave_read.getsampwidth()
-            sample_rate = wave_read.getframerate()
-            songs_dl.append([songs[0][0], songs[0][1], songs[0][2], audio_data, num_channels, bytes_per_sample, sample_rate])
-            wave_read.close()
-            wave_read = None
-            audio_data = None
-            num_channels = None
-            bytes_per_sample = None
-            sample_rate = None
-            filetodelete = songs[0][1]
-            t3 = threading.Thread(target=sys_ProcedureFileRemove)
-            t3.start()
+                sys_DownloadSong(songs[0][1])
+            songs_dl.append(songs[0])
             del songs[0]
         time.sleep(.5)
 
