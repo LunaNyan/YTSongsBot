@@ -5,18 +5,20 @@ from pypresence import Presence
 
 # 사용자 편의를 위해 Youtube Data API v3에 대응하는 API Key를 일부러 깠습니다
 # 원하신다면 바꾸셔도 됩니다
-yt = yt_search.build('AIzaSyDImVy96pESaXcy7mEnhvuhIlAHXuwk1uQ')
+yt = yt_search.build('AIzaSyB586kMlriM12H1jYN8ZqNwd5RD-M79pjc')
 
 songs = []
 songs_dl = []
+qp = False
 
 RPC = Presence('726879500360482879')
 RPC.connect()
 
-print("YTSongsBot v1.30")
+print("YTSongsBot v1.31")
 print("type 'h' for help")
 
 def sys_search_video(title):
+    global qp
     print("Search result of keyword " + title)
     print("select a number in search list")
     search_result = yt.search(title, sMax=10, sType=["video"])
@@ -25,15 +27,20 @@ def sys_search_video(title):
         print("#" + str(ni) + " : " + i + " by " + search_result.channelTitle[ni])
         ni += 1
     print("x  : cancel current search")
-    while 1 == 1:
-        inpa = input("N>")
-        if inpa == "x":
-            raise
-        try:
-            n = int(inpa)
-            return [search_result.title[n], search_result.videoId[n], search_result.channelTitle[n]]
-        except:
-            continue
+    if qp:
+        result = [search_result.title[0], search_result.videoId[0], search_result.channelTitle[0]]
+    else:
+        while 1 == 1:
+            inpa = input("N>")
+            if inpa == "x":
+                raise
+            try:
+                n = int(inpa)
+                result = [search_result.title[n], search_result.videoId[n], search_result.channelTitle[n]]
+            except:
+                continue
+        print("added song " + search_result.title[n] + " by " + search_result.channelTitle[n] + ", now downloading")
+        return result
 
 def sys_DownloadSong(vid):
     osis = platform.system()
@@ -94,6 +101,7 @@ t2.start()
 while 1 == 1:
     inp = input(">")
     if inp == "h":
+        print("===== generic commands =====")
         print("h            : this help")
         print("r (keyword)  : search song and add to playlist")
         print("l            : print playlist")
@@ -101,6 +109,8 @@ while 1 == 1:
         print("del (number) : delete item in playlist")
         print("pr (number)  : priorite playlist item to next song")
         print("sk           : skip current song")
+        print("=====  player options  =====")
+        print("qp           : toggles quick play(always play 1st item in search)")
     elif inp.startswith("r") and inp != "ren":
         if inp == "r":
             print("Usage = r (search keyword)")
@@ -149,5 +159,12 @@ while 1 == 1:
                 print("invalid number")
     elif inp == "sk":
         simpleaudio.stop_all()
+    elif inp == "qp":
+        if qp:
+            qp = False
+            print("quick play disabled")
+        else:
+            qp = True
+            print("quick play enabled")
     else:
         continue
