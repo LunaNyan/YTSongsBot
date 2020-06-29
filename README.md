@@ -1,8 +1,7 @@
 # YTSongsBot
 
 ## 요구 사항
-- x86 또는 amd64 아키텍쳐의 컴퓨터
-- Windows 7+ 또는 Linux
+- Windows 7+, Linux(Debian / Ubuntu 권장), macOS Sierra+(비공식 지원)
 - Python 3.7+
 - 적절한 오디오 출력 장치
 
