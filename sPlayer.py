@@ -80,9 +80,9 @@ def sys_AudioPlayer():
             np = songs_dl[0]
             del songs_dl[0]
             TitlenoLoop = 0
-            ctypes.windll.kernel32.SetConsoleTitleW("▶ " + np[0])
             if osis == "Windows":
-                wave_obj = simpleaudio.WaveObject.from_wave_file(np[1] + '.wav')
+                ctypes.windll.kernel32.SetConsoleTitleW("▶ " + np[0])
+            wave_obj = simpleaudio.WaveObject.from_wave_file(np[1] + '.wav')
             if RPC != None:
                 RPC.update(state="노동요 듣는중", details=np[0])
             os.remove(np[1] + '.wav')
