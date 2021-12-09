@@ -19,7 +19,7 @@
 git clone https://github.com/LunaNyan/YTSongsBot
 cd YTSongsBot
 sudo pip3 install -r requirements.txt
-sudo apt install youtube-dl ffmpeg
+sudo apt install ffmpeg
 ```
 
 실행 : `python3 sPlayer.py`
