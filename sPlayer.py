@@ -58,9 +58,9 @@ def sys_search_video(title):
 def sys_DownloadSong(vid):
     global osis
     if osis == "Windows":
-        os.system('youtube-dl -x --audio-format=wav --output "' + vid + '.%(ext)s" https://www.youtube.com/watch?v=' + vid + ">NUL")
+        os.system('yt-dlp -x --audio-format=wav --output "' + vid + '.%(ext)s" https://www.youtube.com/watch?v=' + vid + ">NUL")
     elif osis == "Linux" or osis == "Darwin":
-        os.system('youtube-dl -x --audio-format=wav --output "./' + vid + '.%(ext)s" https://www.youtube.com/watch?v=' + vid + ">/dev/null")
+        os.system('yt-dlp -x --audio-format=wav --output "./' + vid + '.%(ext)s" https://www.youtube.com/watch?v=' + vid + ">/dev/null")
     else:
         trashbin = ""
 
