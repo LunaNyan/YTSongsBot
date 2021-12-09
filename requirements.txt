@@ -1,5 +1,5 @@
 yt-search
-youtube-dl
+yt-dlp
 simpleaudio
 requests
 pypresence
